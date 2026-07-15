@@ -1,59 +1,70 @@
-# SearchUsersGithub
+# GitHub Explorer
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.2.
+Aplicação Angular para buscar usuários do GitHub e visualizar os repositórios públicos deles em uma interface simples e responsiva.
 
-## Development server
+## O que a aplicação faz
 
-To start a local development server, run:
+Com o GitHub Explorer, você pode:
 
-```bash
-ng serve
-```
+- buscar um usuário do GitHub pelo nome de usuário;
+- visualizar informações básicas do perfil, como nome, bio, seguidores e repositórios públicos;
+- listar os repositórios mais recentes do usuário;
+- ver detalhes como descrição, linguagem, estrelas, forks e data de atualização;
+- alternar entre tema claro e escuro.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Tecnologias utilizadas
 
-## Code scaffolding
+- Angular 20
+- Angular Material
+- RxJS
+- TypeScript
+- GitHub REST API
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Como executar localmente
 
-```bash
-ng generate component component-name
-```
+### Pré-requisitos
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- Node.js 18+ 
+- npm
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Instalação
 
 ```bash
-ng test
+npm install
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+### Iniciar o projeto
 
 ```bash
-ng e2e
+npm start
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+A aplicação ficará disponível em `http://localhost:4200/`.
 
-## Additional Resources
+## Scripts disponíveis
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+npm start      # inicia o servidor de desenvolvimento
+npm run build  # gera a build de produção
+npm test       # executa os testes unitários
+```
+
+## Estrutura do projeto
+
+- `src/app/components/search-users` — componente principal da interface de busca
+- `src/app/services` — serviços para comunicação com a API do GitHub
+- `src/app/interfaces` — modelos TypeScript das respostas da API
+
+## Observações
+
+- A aplicação consome a API pública do GitHub, então o uso depende das limitações de taxa da API.
+- Atualmente, a interface exibe dados públicos de usuários e repositórios.
+
+## Próximos passos
+
+Possíveis melhorias futuras incluem:
+
+- paginação de resultados;
+- busca por nome real ou nome de usuário;
+- suporte a repositórios privados quando houver autenticação;
+- filtros por linguagem, estrelas e visibilidade.
