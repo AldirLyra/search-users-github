@@ -1,12 +1,25 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { SearchUsers } from './components/search-users/search-users';
 
 @Component({
-  selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+    selector: 'app-root',
+    standalone: true,
+    imports: [CommonModule, FormsModule, MatToolbarModule, MatIconModule, MatSlideToggleModule, SearchUsers],
+    templateUrl: './app.html',
+    styleUrls: ['./app.css']
 })
 export class App {
-  protected readonly title = signal('search-users-github');
+    title = 'GitHub User Search';
+    isDarkTheme = false;
+
+    toggleTheme() {
+        this.isDarkTheme = !this.isDarkTheme;
+        document.body.classList.toggle('dark-theme', this.isDarkTheme);
+        localStorage.setItem('darkMode', this.isDarkTheme.toString());
+    }
 }

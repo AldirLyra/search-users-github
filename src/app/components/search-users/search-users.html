@@ -1,0 +1,168 @@
+<div class="user-search-container">
+    <header class="search-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <mat-icon class="github-icon">code</mat-icon>
+                <h1 class="app-title">GitHub Explorer</h1>
+            </div>
+            <mat-slide-toggle [(ngModel)]="isDarkMode"
+                (change)="toggleTheme()"
+                class="theme-toggle">
+                <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+            </mat-slide-toggle>
+        </div>
+    </header>
+
+    <section class="search-section">
+        <div class="search-container">
+            <h2 class="search-title">Explore repositórios de desenvolvedores</h2>
+            <p class="search-subtitle">Digite o nome de usuário para ver todos os repositórios</p>
+
+            <div class="search-input-container">
+                <mat-form-field class="search-field"
+                    appearance="outline">
+                    <mat-label>Nome do usuário</mat-label>
+                    <input matInput
+                        [formControl]="searchControl"
+                        placeholder="ex: octocat"
+                        (keyup.enter)="onSearchSubmit()">
+                    <mat-icon matSuffix>person</mat-icon>
+                </mat-form-field>
+                <button mat-raised-button
+                    color="primary"
+                    (click)="onSearchSubmit()"
+                    [disabled]="!searchControl.value || loading"
+                    class="search-button">
+                    <mat-icon>search</mat-icon>
+                    Buscar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="user-profile"
+        *ngIf="user && !loading">
+        <div class="profile-card">
+            <div class="profile-header">
+                <img [src]="user.avatar_url"
+                    [alt]="user.login"
+                    class="profile-avatar">
+                <div class="profile-info">
+                    <h3 class="profile-name">{{ user.name || user.login }}</h3>
+                    <p class="profile-username">@{{ user.login }}</p>
+                    <p class="profile-bio"
+                        *ngIf="user.bio">{{ user.bio }}</p>
+                </div>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <span class="stat-number">{{ user.public_repos }}</span>
+                    <span class="stat-label">Repositórios</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">{{ user.followers }}</span>
+                    <span class="stat-label">Seguidores</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">{{ user.following }}</span>
+                    <span class="stat-label">Seguindo</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="loading-container"
+        *ngIf="loading">
+        <mat-spinner diameter="60"
+            color="primary"></mat-spinner>
+        <p class="loading-text">{{ user ? 'Carregando repositórios...' : 'Buscando usuário...' }}</p>
+    </div>
+
+    <section class="repositories-section"
+        *ngIf="(user?.repositories?.length ?? 0) > 0 && !loading">
+        <div class="section-header">
+            <h3 class="section-title">Repositórios ({{ user?.repositories?.length ?? 0 }})</h3>
+        </div>
+
+        <div class="repositories-grid">
+            <mat-card *ngFor="let repo of user?.repositories || []; trackBy: trackByRepoId"
+                class="repo-card"
+                (click)="openRepository(repo.html_url)">
+                <mat-card-header class="repo-header">
+                    <mat-card-title class="repo-name">{{ repo.name }}</mat-card-title>
+                    <div class="repo-visibility">
+                        <mat-chip [class]="repo.private ? 'private-chip' : 'public-chip'">
+                            <mat-icon>{{ repo.private ? 'lock' : 'public' }}</mat-icon>
+                            {{ repo.private ? 'Privado' : 'Público' }}
+                        </mat-chip>
+                    </div>
+                </mat-card-header>
+
+                <mat-card-content class="repo-content">
+                    <p class="repo-description"
+                        *ngIf="repo.description">{{ repo.description }}</p>
+                    <p class="no-description"
+                        *ngIf="!repo.description">Sem descrição disponível</p>
+
+                    <div class="repo-stats">
+                        <div class="repo-stat"
+                            *ngIf="repo.language">
+                            <div class="language-dot"
+                                [style.background-color]="getLanguageColor(repo.language)"></div>
+                            <span>{{ repo.language }}</span>
+                        </div>
+                        <div class="repo-stat"
+                            *ngIf="repo.stargazers_count > 0">
+                            <mat-icon>star</mat-icon>
+                            <span>{{ repo.stargazers_count }}</span>
+                        </div>
+                        <div class="repo-stat"
+                            *ngIf="repo.forks_count > 0">
+                            <mat-icon>call_split</mat-icon>
+                            <span>{{ repo.forks_count }}</span>
+                        </div>
+                    </div>
+
+                    <div class="repo-meta">
+                        <span class="updated-date">Atualizado {{ getRelativeTime(repo.updated_at) }}</span>
+                    </div>
+                </mat-card-content>
+
+                <mat-card-actions class="repo-actions">
+                    <button mat-button
+                        color="primary">
+                        <mat-icon>open_in_new</mat-icon>
+                        Ver Repositório
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </section>
+
+    <div class="empty-state"
+        *ngIf="!user && !loading && searchControl.value && !error">
+        <mat-icon class="state-icon">person_search</mat-icon>
+        <h3>Usuário não encontrado</h3>
+        <p>Verifique se o nome de usuário está correto e tente novamente</p>
+    </div>
+
+    <div class="error-state"
+        *ngIf="error">
+        <mat-icon class="state-icon error">error_outline</mat-icon>
+        <h3>Ops! Algo deu errado</h3>
+        <p>{{ error }}</p>
+        <button mat-raised-button
+            color="primary"
+            (click)="onSearchSubmit()">
+            Tentar Novamente
+        </button>
+    </div>
+
+    <div class="initial-state"
+        *ngIf="!user && !loading && !searchControl.value">
+        <mat-icon class="state-icon">search</mat-icon>
+        <h3>Descubra repositórios incríveis</h3>
+        <p>Digite o nome de um desenvolvedor para explorar seus projetos no GitHub</p>
+    </div>
+</div>
